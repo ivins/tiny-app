@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>TinyApp</title>
+</head>
+<body>
+  <h1>URL List</h1>
+  <ul>
+    <% for(let url in urls) { %>
+      <li><%= `${url}: ${urls[url]} ` %><a href="https://www.w3schools.com">hi</a></li>
+    <% } %>
+  </ul>
+</body>
+</html>
