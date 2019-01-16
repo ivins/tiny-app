@@ -71,6 +71,12 @@ app.post('/urls/:id', (req, res) => {
   res.redirect(`http://localhost:8080/urls`);
 });
 
+app.post('/login', (req, res) => {
+  console.log(req.body);
+  res.cookie('username', req.body.username);
+  res.redirect(`http://localhost:8080/urls`);
+});
+
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
