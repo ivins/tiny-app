@@ -38,10 +38,14 @@ app.get('/urls/:id', (req, res) => {
 });
 
 app.post('/urls', (req, res) => {
-  console.log(req.body);
-  const id = generateRandomString();
-  urlDatabase[id] = req.body.longURL;
-  res.redirect(`http://localhost:8080/urls/${id}`);
+  const httpCheck = req.body.longURL.slice(0, 7);
+  if (httpCheck === 'http://') {
+    const id = generateRandomString();
+    urlDatabase[id] = req.body.longURL;
+    res.redirect(`http://localhost:8080/urls/${id}`);
+  } else {
+    res.render('urls_error');
+  }
 });
 
 app.get('/u/:shortURL', (req, res) => {
