@@ -1,8 +1,9 @@
 const express = require('express');
-
+const bodyParser = require('body-parser');
 const app = express();
 const PORT = 8080; // default port 8080
 
+app.use(bodyParser.urlencoded({ extended: true }));
 app.set('view engine', 'ejs');
 
 const urlDatabase = {
@@ -23,12 +24,27 @@ app.get('/urls', (req, res) => {
   res.render('urls_index', templateVars);
 });
 
+app.get('/urls/new', (req, res) => {
+  res.render('urls_new');
+});
+
 app.get('/urls/:id', (req, res) => {
   let templateVars = {
     shortURL: req.params.id,
     longURL: urlDatabase[req.params.id]
   };
   res.render('urls_show', templateVars);
+});
+
+app.post('/urls', (req, res) => {
+  console.log(req.body);
+  const id = generateRandomString();
+  urlDatabase[id] = req.body.longURL;
+  res.redirect(`http://localhost:8080/urls/${id}`);
+});
+
+app.get('/u/:shortURL', (req, res) => {
+  res.redirect(urlDatabase[req.params.shortURL]);
 });
 
 app.get('/hello', (req, res) => {
@@ -38,3 +54,14 @@ app.get('/hello', (req, res) => {
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
+
+function generateRandomString () {
+  const charOptions = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  let randomString = '';
+  for (let i = 0; i < 6; i += 1) {
+    randomString += charOptions[Math.floor(Math.random() * charOptions.length)];
+  }
+  return randomString;
+}
+
+
