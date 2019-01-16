@@ -52,6 +52,19 @@ app.get('/hello', (req, res) => {
   res.send('<html><body>Hello <b>World</b></body></html>\n');
 });
 
+app.post('/urls/:id/delete', (req, res) => {
+  const shortURL = req.params.id;
+  delete urlDatabase[shortURL];
+  res.redirect(`http://localhost:8080/urls`);
+});
+
+app.post('/urls/:id', (req, res) => {
+  const newURL = req.body.updatedURL;
+  const id = req.params.id;
+  urlDatabase[id] = newURL;
+  res.redirect(`http://localhost:8080/urls`);
+});
+
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
