@@ -93,7 +93,7 @@ app.post('/login', (req, res) => {
 });
 
 app.post('/logout', (req, res) => {
-  res.clearCookie(req.cookies.username);
+  res.clearCookie('username');
   res.redirect(`http://localhost:8080/urls`);
 });
 
