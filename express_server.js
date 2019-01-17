@@ -116,9 +116,16 @@ app.get('/register', (req, res) => {
   res.render('register', templateVars);
 });
 
-// User submits a request to register
+// User submits a request to register a new user
 app.post('/register', (req, res) => {
-  res.redirect(`http://localhost:8080/urls`)
+  const id = generateRandomString();
+  users[id] = {
+    id: id,
+    email: req.body.email,
+    password: req.body.password
+  };
+  res.cookie('username', users[id].id);
+  res.redirect(`http://localhost:8080/urls`);
 });
 
 // user logs in and cookie gets set.
