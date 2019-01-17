@@ -77,13 +77,23 @@ app.post('/urls/:id/delete', (req, res) => {
 
 app.post('/urls/:id', (req, res) => {
   const newURL = req.body.updatedURL;
-  const id = req.params.id;
-  urlDatabase[id] = newURL;
-  res.redirect(`http://localhost:8080/urls`);
+  const httpCheck = newURL.slice(0, 7);
+  if (httpCheck === 'http://') {
+    const id = req.params.id;
+    urlDatabase[id] = newURL;
+    res.redirect(`http://localhost:8080/urls`);
+  } else {
+    res.redirect(`http://localhost:8080/urls`);
+  }
 });
 
 app.post('/login', (req, res) => {
   res.cookie('username', req.body.username);
+  res.redirect(`http://localhost:8080/urls`);
+});
+
+app.post('/logout', (req, res) => {
+  res.clearCookie(req.cookies.username);
   res.redirect(`http://localhost:8080/urls`);
 });
 
@@ -99,5 +109,4 @@ function generateRandomString () {
   }
   return randomString;
 }
-
 

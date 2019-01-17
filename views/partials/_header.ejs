@@ -6,6 +6,9 @@
 
   <% if (username) {%>
   <h1><%= username %></h1>
+  <form action= <%=`/logout`%> method="POST" style="margin:5px;">
+    <input type="submit" value="Logout">
+  </form>
   <% } else {%>
   <form action= /login method="POST" style="margin:100px;">
     <label for="userName">Enter Your Name:</label>
