@@ -118,14 +118,22 @@ app.get('/register', (req, res) => {
 
 // User submits a request to register a new user
 app.post('/register', (req, res) => {
-  const id = generateRandomString();
-  users[id] = {
-    id: id,
-    email: req.body.email,
-    password: req.body.password
-  };
-  res.cookie('username', users[id].id);
-  res.redirect(`http://localhost:8080/urls`);
+  let exists = userExists(req.body.email);
+  console.log('Exists: ', exists);
+  if (!req.body.email || !req.body.password) {
+    res.status(400).send({ Error: 'Username/Password fields cannot be empty' });
+  } else if (exists) {
+    res.status(400).send({ Error: 'An account exists for this username. Try Registering Again' });
+  } else {
+    const id = generateRandomString();
+    users[id] = {
+      id: id,
+      email: req.body.email,
+      password: req.body.password
+    };
+    res.cookie('username', users[id].id);
+    res.redirect(`http://localhost:8080/urls`);
+  }
 });
 
 // user logs in and cookie gets set.
@@ -155,3 +163,16 @@ function generateRandomString () {
   return randomString;
 }
 
+function userExists (reqEmail) {
+  // console.log('req email: ', reqEmail);
+  let user = '';
+  Object.keys(users).filter(function (key) {
+    if (users[key].email === reqEmail) {
+      user = users[key].email;
+      return users[key].email;
+    }
+  });
+  return user;
+}
+
+// userExists('steve@example.com');

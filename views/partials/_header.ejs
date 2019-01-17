@@ -11,20 +11,21 @@
   <nav class="navbar navbar-default" role="navigation">
     <a class="navbar-brand" href="/urls">URL List</a>
     <a class="navbar-brand" href="/urls/new">Add New URL</a>
-  <form action= <%=`/logout`%> method="POST" style="margin:5px;">
-    <input class="btn btn-primary" type="submit" value="Logout">
-  </form>
+  <div class="col-md-1" style="margin: 8px">
+    <form class="form-inline" action= '/logout' method="POST">
+    <button class="btn btn-primary" type="submit">Logout</button>
+    </form>
+  </div>
   </nav>
   <h1>Hello <%= username %></h1>
   <% } else {%>
   <nav class="navbar navbar-default" role="navigation">
-  <a class="navbar-brand" href="/urls">URL List</a>
-  <a class="navbar-brand" href="/urls/new">Add New URL</a>
-
+    <a class="navbar-brand" href="/urls">URL List</a>
+    <a class="navbar-brand" href="/urls/new">Add New URL</a>
   <div class="col-md-1" style="margin: 8px">
     <form class="form-inline" method="GET" action= '/register' >
-          <button class="btn btn-success" type="submit">Register</button>
-      </form>
+      <button class="btn btn-success" type="submit">Register</button>
+    </form>
   </div>
     </nav>
   <% } %>
