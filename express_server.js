@@ -16,15 +16,15 @@ const urlDatabase = {
 };
 
 const users = {
-  userRandomID: {
-    id: 'userRandomID',
-    email: 'user@example.com',
-    password: 'purple-monkey-dinosaur'
+  BobJackson: {
+    id: 'BobJackson',
+    email: 'bob@example.com',
+    password: 'b123'
   },
- user2RandomID: {
-    id: 'user2RandomID',
-    email: 'user2@example.com',
-    password: 'dishwasher-funk'
+  SteveJackson: {
+    id: 'SteveJackson',
+    email: 'steve@example.com',
+    password: 's123'
   }
 };
 
@@ -118,7 +118,7 @@ app.get('/register', (req, res) => {
 
 // User submits a request to register
 app.post('/register', (req, res) => {
-
+  res.redirect(`http://localhost:8080/urls`)
 });
 
 // user logs in and cookie gets set.
