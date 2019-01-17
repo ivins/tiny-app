@@ -1,17 +1,11 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <title>Short+Long Url</title>
-</head>
+<% include ./partials/_header %>
 <body>
-  <% include ./partials/_header %>
   <h1>Short And Long URL</h1>
   <p><%= `${shortURL} ---> ` %><a href=<%= `${longURL}` %> ><%= `${longURL}` %></a></p>
-  <form action= <%=`/urls/${shortURL}`%> method="POST" style="margin:150px;">
+  <form class="form-inline" action= <%=`/urls/${shortURL}`%> method="POST" style="margin:20px;">
     <label for="newURL">Update URL:</label>
     <input id="newURL" type="text" name="updatedURL" placeholder="Make sure to start with http://" style="width: 300px">
-    <input type="submit" value="Update">
+    <input class="btn btn-info" type="submit" value="Update">
   </form>
 </body>
 </html>
