@@ -7,20 +7,26 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <header>
+  <% if (username) {%>
   <nav class="navbar navbar-default" role="navigation">
     <a class="navbar-brand" href="/urls">URL List</a>
     <a class="navbar-brand" href="/urls/new">Add New URL</a>
-  </nav>
-  <% if (username) {%>
-  <h1>Hello <%= username %></h1>
   <form action= <%=`/logout`%> method="POST" style="margin:5px;">
     <input class="btn btn-primary" type="submit" value="Logout">
   </form>
+  </nav>
+  <h1>Hello <%= username %></h1>
   <% } else {%>
-  <form action= /login method="POST">
-    <label for="userName" style="font-size: 20px">Enter Your Name:</label>
-    <input id="userName" type="text" name="username" placeholder="Jane" style="width: 300px">
-    <input type="submit" value="Submit">
+  <nav class="navbar navbar-default" role="navigation">
+  <a class="navbar-brand" href="/urls">URL List</a>
+  <a class="navbar-brand" href="/urls/new">Add New URL</a>
+
+  <div class="col-md-1" style="margin: 8px">
+    <form class="form-inline" method="GET" action= '/register' >
+          <button class="btn btn-success" type="submit">Register</button>
+      </form>
+  </div>
+    </nav>
   <% } %>
   </form>
 </header>

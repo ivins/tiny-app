@@ -15,6 +15,19 @@ const urlDatabase = {
   '9sm5xK': 'http://www.google.com'
 };
 
+const users = {
+  userRandomID: {
+    id: 'userRandomID',
+    email: 'user@example.com',
+    password: 'purple-monkey-dinosaur'
+  },
+ user2RandomID: {
+    id: 'user2RandomID',
+    email: 'user2@example.com',
+    password: 'dishwasher-funk'
+  }
+};
+
 app.get('/', (req, res) => {
   res.send('Hello!');
 });
@@ -41,6 +54,7 @@ app.get('/urls/new', (req, res) => {
   res.render('urls_new', templateVars);
 });
 
+// shows the specified URL short and long and offers option to update if desired.
 app.get('/urls/:id', (req, res) => {
   const templateVars = {
     shortURL: req.params.id,
@@ -50,6 +64,7 @@ app.get('/urls/:id', (req, res) => {
   res.render('urls_show', templateVars);
 });
 
+// Adds new url, assigns random id/short url and adds it to the database. Otherwise fires error.
 app.post('/urls', (req, res) => {
   const httpCheck = req.body.longURL.slice(0, 7);
   const templateVars = {
@@ -64,6 +79,7 @@ app.post('/urls', (req, res) => {
   }
 });
 
+// redirect platform for shortened URLS
 app.get('/u/:shortURL', (req, res) => {
   res.redirect(urlDatabase[req.params.shortURL]);
 });
@@ -92,6 +108,19 @@ app.post('/urls/:id', (req, res) => {
   }
 });
 
+// request which returns the registration page
+app.get('/register', (req, res) => {
+  const templateVars = {
+    username: req.cookies['username']
+  };
+  res.render('register', templateVars);
+});
+
+// User submits a request to register
+app.post('/register', (req, res) => {
+
+});
+
 // user logs in and cookie gets set.
 app.post('/login', (req, res) => {
   res.cookie('username', req.body.username);
@@ -104,10 +133,12 @@ app.post('/logout', (req, res) => {
   res.redirect(`http://localhost:8080/urls`);
 });
 
+// Starts the server and listens for requests on specified port.
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
 
+// generates a random string for Short URL.
 function generateRandomString () {
   const charOptions = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
   let randomString = '';
