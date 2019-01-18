@@ -40,7 +40,7 @@ app.get('/', (req, res) => {
 app.get('/urls', (req, res) => {
   const templateVars = {
     urls: urlDatabase,
-    username: req.cookies['username']
+    user: users[req.cookies['user_id']]
   };
   res.render('urls_index', templateVars);
 });
@@ -49,7 +49,7 @@ app.get('/urls', (req, res) => {
 app.get('/urls/new', (req, res) => {
   const templateVars = {
     urls: urlDatabase,
-    username: req.cookies['username']
+    user: users[req.cookies['user_id']]
   };
   res.render('urls_new', templateVars);
 });
@@ -59,7 +59,7 @@ app.get('/urls/:id', (req, res) => {
   const templateVars = {
     shortURL: req.params.id,
     longURL: urlDatabase[req.params.id],
-    username: req.cookies['username']
+    user: users[req.cookies['user_id']]
   };
   res.render('urls_show', templateVars);
 });
@@ -68,7 +68,7 @@ app.get('/urls/:id', (req, res) => {
 app.post('/urls', (req, res) => {
   const httpCheck = req.body.longURL.slice(0, 7);
   const templateVars = {
-    username: req.cookies['username']
+    user: users[req.cookies['user_id']]
   };
   if (httpCheck === 'http://') {
     const id = generateRandomString();
@@ -111,15 +111,16 @@ app.post('/urls/:id', (req, res) => {
 // request which returns the registration page
 app.get('/register', (req, res) => {
   const templateVars = {
-    username: req.cookies['username']
+    urls: urlDatabase,
+    user: users[req.cookies['user_id']]
   };
+
   res.render('register', templateVars);
 });
 
 // User submits a request to register a new user
 app.post('/register', (req, res) => {
   let exists = userExists(req.body.email);
-  console.log('Exists: ', exists);
   if (!req.body.email || !req.body.password) {
     res.status(400).send({ Error: 'Username/Password fields cannot be empty' });
   } else if (exists) {
@@ -131,20 +132,19 @@ app.post('/register', (req, res) => {
       email: req.body.email,
       password: req.body.password
     };
-    res.cookie('username', users[id].id);
+    res.cookie('user_id', id);
     res.redirect(`http://localhost:8080/urls`);
   }
 });
 
-// user logs in and cookie gets set.
-app.post('/login', (req, res) => {
-  res.cookie('username', req.body.username);
-  res.redirect(`http://localhost:8080/urls`);
+// user logs in and cookie gets set. -------no longer in use
+app.get('/login', (req, res) => {
+  res.render('login');
 });
 
 // receiving a request to log out. Clears cookies then sends them back to urls page.
 app.post('/logout', (req, res) => {
-  res.clearCookie('username');
+  res.clearCookie('user_id');
   res.redirect(`http://localhost:8080/urls`);
 });
 
