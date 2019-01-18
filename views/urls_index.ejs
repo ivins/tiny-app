@@ -1,6 +1,10 @@
 <% include ./partials/_header %>
 <body style="margin: 10px">
+  <% if (!user) { %>
+  <h1>Please login to view your urls</h1>
+  <% } else { %>
   <h1>Here is your URL List</h1>
+  <% } %>
   <ul>
     <% for(let url in urls) { %>
      <div class="container">

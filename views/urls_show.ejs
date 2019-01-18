@@ -1,5 +1,8 @@
 <% include ./partials/_header %>
 <body>
+  <% if (!user) { %>
+  <h1>Please login to view your urls</h1>
+  <% } else { %>
   <h1>Short And Long URL</h1>
   <p><%= `${shortURL} ---> ` %><a href=<%= `${longURL.longUrl}` %> ><%= `${longURL.longUrl}` %></a></p>
   <form class="form-inline" action= <%=`/urls/${shortURL}`%> method="POST" style="margin:20px;">
@@ -7,5 +10,6 @@
     <input id="newURL" type="text" name="updatedURL" placeholder="Make sure to start with http://" style="width: 300px">
     <input class="btn btn-info" type="submit" value="Update">
   </form>
+  <% } %>
 </body>
 </html>

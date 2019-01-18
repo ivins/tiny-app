@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
+const bcrypt = require('bcrypt');
 
 const app = express();
 const PORT = 8080; // default port 8080
@@ -18,6 +19,10 @@ const urlDatabase = {
   '9sm5xK': {
     longUrl: 'http://www.google.com',
     userID: 'BobJackson'
+  },
+  b2xVYY: {
+    longUrl: 'http://www.yahoo.ca',
+    userID: 'SteveJackson'
   }
 };
 
@@ -44,8 +49,9 @@ app.get('/', (req, res) => {
 
 // Sends the URL database and username to the index page
 app.get('/urls', (req, res) => {
+  const userURLS = userDB(req.cookies['user_id']);
   const templateVars = {
-    urls: urlDatabase,
+    urls: userURLS,
     user: users[req.cookies['user_id']]
   };
   res.render('urls_index', templateVars);
@@ -66,12 +72,22 @@ app.get('/urls/new', (req, res) => {
 
 // shows the specified URL short and long and offers option to update if desired.
 app.get('/urls/:id', (req, res) => {
-  const templateVars = {
-    shortURL: req.params.id,
-    longURL: urlDatabase[req.params.id],
-    user: req.cookies['user_id']
-  };
-  res.render('urls_show', templateVars);
+  const userURLS = userDB(req.cookies['user_id']);
+  if (!req.cookies['user_id']) {
+    const templateVars = {
+      user: users[req.cookies['user_id']]
+    };
+    res.render('urls_show', templateVars);
+  } else if (req.cookies['user_id'] && userURLS[req.params.id]) {
+    const templateVars = {
+      shortURL: req.params.id,
+      longURL: userURLS[req.params.id],
+      user: users[req.cookies['user_id']]
+    };
+    res.render('urls_show', templateVars);
+  } else {
+    res.status(400).send({ Error: 'URL does not belong to you' });
+  }
 });
 
 // Adds new url, assigns random id/short url and adds it to the database. Otherwise fires error.
@@ -94,7 +110,7 @@ app.post('/urls', (req, res) => {
 
 // redirect platform for shortened URLS
 app.get('/u/:shortURL', (req, res) => {
-  res.redirect(urlDatabase[req.params.shortURL]);
+  res.redirect(urlDatabase[req.params.shortURL]['longUrl']);
 });
 
 // app.get('/hello', (req, res) => {
@@ -136,7 +152,6 @@ app.get('/register', (req, res) => {
     urls: urlDatabase,
     user: users[req.cookies['user_id']]
   };
-
   res.render('register', templateVars);
 });
 
@@ -149,10 +164,12 @@ app.post('/register', (req, res) => {
     res.status(400).send({ Error: 'An account exists for this username. Try Registering Again' });
   } else {
     const id = generateRandomString();
+    const password = req.body.password;
+    const hashedPassword = bcrypt.hashSync(password, 10);
     users[id] = {
       id: id,
       email: req.body.email,
-      password: req.body.password
+      password: hashedPassword
     };
     res.cookie('user_id', id);
     res.redirect(`http://localhost:8080/urls`);
@@ -205,7 +222,6 @@ function generateRandomString () {
 }
 
 function userExists (reqEmail) {
-  // console.log('req email: ', reqEmail);
   let user = '';
   Object.keys(users).filter(function (key) {
     if (users[key].email === reqEmail) {
@@ -217,7 +233,6 @@ function userExists (reqEmail) {
 }
 
 function userId (reqEmail) {
-  // console.log('req email: ', reqEmail);
   let user = '';
   Object.keys(users).filter(function (key) {
     if (users[key].email === reqEmail) {
@@ -227,5 +242,18 @@ function userId (reqEmail) {
   });
   return user;
 }
-// console.log(users);
-// userId('steve@example.com');
+
+function userDB (ident) {
+  const userURLS = {};
+  const exists = users[ident];
+  if (users[ident]) {
+    Object.keys(urlDatabase).filter(function (key) {
+      if (urlDatabase[key].userID === ident) {
+        userURLS[key] = urlDatabase[key];
+      }
+    });
+    return userURLS;
+  }
+}
+
+// userDB('SteveJackson');
