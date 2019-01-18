@@ -142,6 +142,25 @@ app.get('/login', (req, res) => {
   res.render('login');
 });
 
+app.post('/login', (req, res) => {
+  const exists = userExists(req.body.email);
+  const userVerified = userId(exists);
+  const templateVars = {
+    urls: urlDatabase,
+    user: users[userVerified]
+  };
+  if (exists) {
+    if (req.body.password === users[userVerified].password) {
+      res.cookie('user_id', userVerified);
+      res.redirect(`http://localhost:8080/urls`);
+    } else {
+      res.status(400).send({ Error: 'Password incorrect' });
+    }
+  } else {
+    res.status(400).send({ Error: 'Email is not recoqnized' });
+  }
+});
+
 // receiving a request to log out. Clears cookies then sends them back to urls page.
 app.post('/logout', (req, res) => {
   res.clearCookie('user_id');
@@ -175,4 +194,16 @@ function userExists (reqEmail) {
   return user;
 }
 
-// userExists('steve@example.com');
+function userId (reqEmail) {
+  // console.log('req email: ', reqEmail);
+  let user = '';
+  Object.keys(users).filter(function (key) {
+    if (users[key].email === reqEmail) {
+      user = users[key].id;
+      return users[key].id;
+    }
+  });
+  return user;
+}
+// console.log(users);
+// userId('steve@example.com');
