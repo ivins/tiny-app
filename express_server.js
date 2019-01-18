@@ -11,8 +11,14 @@ app.set('view engine', 'ejs');
 
 // Example URL Database
 const urlDatabase = {
-  b2xVn2: 'http://www.lighthouselabs.ca',
-  '9sm5xK': 'http://www.google.com'
+  b2xVn2: {
+    longUrl: 'http://www.lighthouselabs.ca',
+    userID: 'SteveJackson'
+  },
+  '9sm5xK': {
+    longUrl: 'http://www.google.com',
+    userID: 'BobJackson'
+  }
 };
 
 const users = {
@@ -54,7 +60,6 @@ app.get('/urls/new', (req, res) => {
   if (req.cookies['user_id']) {
     res.render('urls_new', templateVars);
   } else {
-    console.log('user not logged in');
     res.render('login', templateVars);
   }
 });
@@ -64,7 +69,7 @@ app.get('/urls/:id', (req, res) => {
   const templateVars = {
     shortURL: req.params.id,
     longURL: urlDatabase[req.params.id],
-    user: users[req.cookies['user_id']]
+    user: req.cookies['user_id']
   };
   res.render('urls_show', templateVars);
 });
@@ -77,7 +82,10 @@ app.post('/urls', (req, res) => {
   };
   if (httpCheck === 'http://') {
     const id = generateRandomString();
-    urlDatabase[id] = req.body.longURL;
+    urlDatabase[id] = {
+      longUrl: req.body.longURL,
+      userID: req.cookies['user_id']
+    };
     res.redirect(`http://localhost:8080/urls/${id}`);
   } else {
     res.render('urls_error', templateVars);
@@ -106,7 +114,7 @@ app.post('/urls/:id', (req, res) => {
   const httpCheck = newURL.slice(0, 7);
   if (httpCheck === 'http://') {
     const id = req.params.id;
-    urlDatabase[id] = newURL;
+    urlDatabase[id].longUrl = newURL;
     res.redirect(`http://localhost:8080/urls`);
   } else {
     res.redirect(`http://localhost:8080/urls`);
