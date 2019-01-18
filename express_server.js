@@ -104,20 +104,29 @@ app.get('/u/:shortURL', (req, res) => {
 // when a request to delete a url this is activated.
 app.post('/urls/:id/delete', (req, res) => {
   const shortURL = req.params.id;
-  delete urlDatabase[shortURL];
-  res.redirect(`http://localhost:8080/urls`);
+  if (req.cookies['user_id'] === urlDatabase[shortURL].userID) {
+    delete urlDatabase[shortURL];
+    res.redirect(`http://localhost:8080/urls`);
+  } else {
+    res.redirect(`http://localhost:8080/urls`);
+  }
 });
 
 // when a URL is updated/changed this is activated.
 app.post('/urls/:id', (req, res) => {
   const newURL = req.body.updatedURL;
+  const shortURL = req.params.id;
   const httpCheck = newURL.slice(0, 7);
-  if (httpCheck === 'http://') {
-    const id = req.params.id;
-    urlDatabase[id].longUrl = newURL;
-    res.redirect(`http://localhost:8080/urls`);
+  if (req.cookies['user_id'] === urlDatabase[shortURL].userID) {
+    if (httpCheck === 'http://') {
+      const id = req.params.id;
+      urlDatabase[id].longUrl = newURL;
+      res.redirect(`http://localhost:8080/urls`);
+    } else {
+      res.status(400).send({ Error: 'URL should start with http://  try again' });
+    }
   } else {
-    res.redirect(`http://localhost:8080/urls`);
+    res.status(400).send({ Error: 'Not authorized to delete this URL' });
   }
 });
 
@@ -177,7 +186,7 @@ app.post('/login', (req, res) => {
 // receiving a request to log out. Clears cookies then sends them back to urls page.
 app.post('/logout', (req, res) => {
   res.clearCookie('user_id');
-  res.redirect(`http://localhost:8080/urls`);
+  res.redirect(`http://localhost:8080/login`);
 });
 
 // Starts the server and listens for requests on specified port.
