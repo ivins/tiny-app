@@ -51,7 +51,12 @@ app.get('/urls/new', (req, res) => {
     urls: urlDatabase,
     user: users[req.cookies['user_id']]
   };
-  res.render('urls_new', templateVars);
+  if (req.cookies['user_id']) {
+    res.render('urls_new', templateVars);
+  } else {
+    console.log('user not logged in');
+    res.render('login', templateVars);
+  }
 });
 
 // shows the specified URL short and long and offers option to update if desired.
