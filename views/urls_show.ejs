@@ -5,7 +5,7 @@
   <% } else { %>
   <h1>Short And Long URL</h1>
   <p><a href= <%= `/u/${shortURL}` %> ><%= `${shortURL} ---> ` %></a><a href=<%= `${longURL.longUrl}` %> ><%= `${longURL.longUrl}` %></a></p>
-  <form class="form-inline" action= <%=`/urls/${shortURL}`%> method="POST" style="margin:20px;">
+  <form class="form-inline" action= <%=`/urls/${shortURL}` %> method="POST" style="margin:20px;">
     <label for="newURL">Update URL:</label>
     <input id="newURL" type="text" name="updatedURL" placeholder="Make sure to start with http://" style="width: 300px">
     <input class="btn btn-info" type="submit" value="Update">

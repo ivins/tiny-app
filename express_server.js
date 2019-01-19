@@ -76,14 +76,16 @@ app.get('/urls/new', (req, res) => {
   if (req.session.user_id) {
     res.render('urls_new', templateVars);
   } else {
-    res.redirect(`http://localhost:8080/urls`);
+    res.redirect(`/login`);
   }
 });
 
 // shows the specified URL short and long and offers option to update if desired.
 app.get('/urls/:id', (req, res) => {
   const userURLS = userDB(req.session.user_id);
-  if (!req.session.user_id) {
+  if (!urlDatabase[req.params.id]) {
+    res.status(400).send({ Error: 'URL does not exist' });
+  } else if (!req.session.user_id) {
     const templateVars = {
       user: users[req.session.user_id]
     };
@@ -112,7 +114,7 @@ app.post('/urls', (req, res) => {
       longUrl: req.body.longURL,
       userID: req.session.user_id
     };
-    res.redirect(`http://localhost:8080/urls/${id}`);
+    res.redirect(`/urls/${id}`);
   } else {
     res.render('urls_error', templateVars);
   }
@@ -120,7 +122,11 @@ app.post('/urls', (req, res) => {
 
 // redirect platform for shortened URLS
 app.get('/u/:shortURL', (req, res) => {
-  res.redirect(urlDatabase[req.params.shortURL]['longUrl']);
+  if (urlDatabase[req.params.shortURL]) {
+    res.redirect(urlDatabase[req.params.shortURL]['longUrl']);
+  } else {
+    res.status(400).send({ Error: 'URL does not exist' });
+  }
 });
 
 // when a request to delete a url this is activated.
@@ -128,9 +134,9 @@ app.post('/urls/:id/delete', (req, res) => {
   const shortURL = req.params.id;
   if (req.session.user_id === urlDatabase[shortURL].userID) {
     delete urlDatabase[shortURL];
-    res.redirect(`http://localhost:8080/urls`);
+    res.redirect(`/urls`);
   } else {
-    res.redirect(`http://localhost:8080/urls`);
+    res.redirect(`/urls`);
   }
 });
 
@@ -143,7 +149,7 @@ app.post('/urls/:id', (req, res) => {
     if (httpCheck === 'http://') {
       const id = req.params.id;
       urlDatabase[id].longUrl = newURL;
-      res.redirect(`http://localhost:8080/urls`);
+      res.redirect(`/urls`);
     } else {
       res.status(400).send({ Error: 'URL should start with http://  try again' });
     }
@@ -154,11 +160,15 @@ app.post('/urls/:id', (req, res) => {
 
 // request which returns the registration page
 app.get('/register', (req, res) => {
-  const templateVars = {
-    urls: urlDatabase,
-    user: users[req.session.user_id]
-  };
+  if (users[req.session.user_id]) {
+    res.redirect(`/urls`);
+  } else {
+    const templateVars = {
+      urls: urlDatabase,
+      user: users[req.session.user_id]
+    };
   res.render('register', templateVars);
+  }
 });
 
 // User submits a request to register a new user
@@ -178,13 +188,17 @@ app.post('/register', (req, res) => {
       password: hashedPassword
     };
     req.session.user_id = id;
-    res.redirect(`http://localhost:8080/urls`);
+    res.redirect(`/urls`);
   }
 });
 
 // user logs in and cookie gets set. -------no longer in use
 app.get('/login', (req, res) => {
-  res.render('login');
+  if (users[req.session.user_id]) {
+    res.redirect(`/urls`);
+  } else {
+    res.render('login');
+  }
 });
 
 app.post('/login', (req, res) => {
@@ -197,7 +211,7 @@ app.post('/login', (req, res) => {
   if (exists) {
     if (bcrypt.compareSync(req.body.password, users[userVerified].password)) {
       req.session.user_id = userVerified;
-      res.redirect(`http://localhost:8080/urls`);
+      res.redirect(`/urls`);
     } else {
       res.status(400).send({ Error: 'Password incorrect' });
     }
@@ -209,7 +223,7 @@ app.post('/login', (req, res) => {
 // receiving a request to log out. Clears cookies then sends them back to urls page.
 app.post('/logout', (req, res) => {
   req.session = null;
-  res.redirect(`http://localhost:8080/login`);
+  res.redirect(`/urls`);
 });
 
 // Starts the server and listens for requests on specified port.
