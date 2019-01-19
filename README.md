@@ -2,6 +2,11 @@
 
 Tiny App is a full stack web application built with Node and Express that allows users to shorten long URLs (similar to bit.ly).
 
+## Final Session
+
+!["Screenshot of main URLs page"](https://github.com/silentscribe/tiny-app/blob/master/docs/URLs-page.png?raw=true)
+
+
 ## Dependencies
 
 - Node.js
