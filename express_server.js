@@ -53,9 +53,6 @@ app.get('/', (req, res) => {
   }
 });
 
-// app.get('/urls.json', (req, res) => {
-//   res.json(urlDatabase);
-// });
 
 // Sends the URL database and username to the index page
 app.get('/urls', (req, res) => {
@@ -167,7 +164,7 @@ app.get('/register', (req, res) => {
       urls: urlDatabase,
       user: users[req.session.user_id]
     };
-  res.render('register', templateVars);
+    res.render('register', templateVars);
   }
 });
 
@@ -275,4 +272,3 @@ function userDB (ident) {
   return userURLS;
   }
 }
-
