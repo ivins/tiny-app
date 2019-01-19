@@ -46,7 +46,11 @@ const users = {
 };
 
 app.get('/', (req, res) => {
-  res.send('Hello!');
+  if (req.session.user_id) {
+    res.redirect(`/urls`);
+  } else {
+    res.redirect(`/login`);
+  }
 });
 
 // app.get('/urls.json', (req, res) => {
@@ -72,7 +76,7 @@ app.get('/urls/new', (req, res) => {
   if (req.session.user_id) {
     res.render('urls_new', templateVars);
   } else {
-    res.render('login', templateVars);
+    res.redirect(`http://localhost:8080/urls`);
   }
 });
 
@@ -192,7 +196,7 @@ app.post('/login', (req, res) => {
   };
   if (exists) {
     if (bcrypt.compareSync(req.body.password, users[userVerified].password)) {
-      res.cookie('user_id', userVerified);
+      req.session.user_id = userVerified;
       res.redirect(`http://localhost:8080/urls`);
     } else {
       res.status(400).send({ Error: 'Password incorrect' });
@@ -204,6 +208,7 @@ app.post('/login', (req, res) => {
 
 // receiving a request to log out. Clears cookies then sends them back to urls page.
 app.post('/logout', (req, res) => {
+  req.session = null;
   res.redirect(`http://localhost:8080/login`);
 });
 

@@ -10,7 +10,7 @@
      <div class="container">
        <div class="row" style="margin-top:10px">
           <div class="col-md-7">
-             <li style="font-size: 20px"><%= `${url} ---> ` %><a href=<%= `${urls[url].longUrl}` %> ><%= `${urls[url].longUrl}` %></a></li>
+             <li style="font-size: 20px"><a href= <%= `/u/${url}` %> ><%= `${url} ---> ` %></a><a href=<%= `${urls[url].longUrl}` %> ><%= `${urls[url].longUrl}` %></a></li>
           </div>
           <div class="col-md-1">
             <form class="form-inline" method="GET" action= <%= `/urls/${url}` %> >
